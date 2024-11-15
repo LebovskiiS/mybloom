@@ -1,22 +1,39 @@
+### MyBloom
 
-Welcome to the 'mybloom' project. The essence of the project is to create a 
-back-end part of the application through which customers can buy their own 
-space on a real farm and grow the vegetables and fruits they want. Everything 
-will happen in real time, and the user will see the growing process with the 
-help of animation. After that, they will receive the produce freshly 
-delivered straight from the garden.
+## Description
+The essence of the project is to create the backend part of the application, 
+through which customers will be able to buy space on a real farm 
+and grow the fruits and vegetables they want. Everything will
+happen in real time and the user will see the growing process
+through animations. After that, they will get fresh produce
+delivered straight from the vegetable garden.
 
-I am developing this project in Python using the asynchronous framework FastAPI,
-PostgreSQL, and SQLAlchemy ORM. I also plan to use Redis and Kafka to 
-eliminate performance bottlenecks.
+# Technology
+- FastAPI
+- SQLAlchemy ORM
+- PostgreSQL
+- Docker
+- Redis
+- Kafka
 
-Currently, I am developing this project on my own, 
-introducing new features and updates every day.
+# Installation
+Follow the steps below to install and start the project:
+
+1. Clone the repository:
+   ```sh
+   git clone git@github.com:LebovskiiS/mybloom.git
+
+2. Install dependencies
+ pip install -r requirements.txt
+
+3. Start the project
+Start the project from the main file or 
+by executing the command on the command line 
+`uvicorn app:app --reload`
 
 
 
-
-You can see all the updates by downloading the repository and running the command:
-
-    pip install -r requirements.txt
-You can see how the API works by adding the /docs endpoint to the localhost.
+###
+If you notice any bugs or if you have any tips on 
+how to improve the project,
+please text me at my LinkedIn https://www.linkedin.com/in/zheliabovskiisergei/.
