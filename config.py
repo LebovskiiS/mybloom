@@ -9,8 +9,8 @@ SECRET_KEY_FILE = os.path.join(HOME_DIRRECTORY + '/Desktop/SECRET_KEY')
 
 
 DB_USER = os.getenv('DB_USER')
-DB_PASS = os.getenv('DB_PASS')
-DB_HOST = os.getenv('DB_HOST')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOSTNAME = os.getenv('DB_HOSTNAME')
 DB_PORT = os.getenv('DB_PORT')
 DB_NAME = os.getenv('DB_NAME')
 
