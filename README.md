@@ -8,6 +8,7 @@ happen in real time and the user will see the growing process
 through animations. After that, they will get fresh produce
 delivered straight from the vegetable garden.
 
+
 # Technology
 - FastAPI
 - SQLAlchemy ORM
@@ -15,6 +16,7 @@ delivered straight from the vegetable garden.
 - Docker
 - Redis
 - Kafka
+
 
 # Installation
 Follow the steps below to install and start the project:
@@ -24,7 +26,7 @@ Follow the steps below to install and start the project:
    git clone git@github.com:LebovskiiS/mybloom.git
 
 2. Install dependencies
- pip install -r requirements.txt
+ `pip install -r requirements.txt`
 
 3. Start the project
 Start the project from the main file or 
@@ -34,6 +36,7 @@ by executing the command on the command line
 
 
 ###
-If you notice any bugs or if you have any tips on 
+_If you notice any bugs or if you have any tips on 
 how to improve the project,
-please text me at my LinkedIn https://www.linkedin.com/in/zheliabovskiisergei/.
+please text me at my LinkedIn_
+ https://www.linkedin.com/in/zheliabovskiisergei/.
