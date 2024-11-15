@@ -294,7 +294,7 @@ poetry.toml
 
 # ruff
 .ruff_cache/
-.idea
+.idea/
 # LSP config files
 pyrightconfig.json
 >>>>>>> 1332625 (v0.0.1 2 endpoints)
