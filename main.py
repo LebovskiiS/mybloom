@@ -1,34 +1,13 @@
 import uvicorn
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
-
-
+from user.router import router as user_router
 
 app = FastAPI(debug= True)
 
+app.include_router(user_router)
 
-class UserRegistration(BaseModel):
-    name: str = Field(max_length= 20)
-    surname: str = Field(max_length= 20)
-    email: str = Field(max_length= 20)
-    phone: int
-    password: str = Field(max_length= 20)
-    address: str = Field(max_length= 20)
-
-
-
-
-@app.post('/registration')
-async def registration(userdata: UserRegistration):
-    return userdata
-
-
-
-@app.post('/')
-async def test(something: str|None = None):
-    return something
-
-
+from user.router import router as router_user
+app.include_router(router_user, prefix='user')
 
 
 
