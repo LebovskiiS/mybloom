@@ -1,8 +1,7 @@
-from fastapi import APIRouter
 from user.schemas import UserRegistration, UserLogin, UserChangePassword
+from fastapi import APIRouter
 
 router = APIRouter()
-
 
 
 @router.post('/registration')
