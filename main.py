@@ -9,7 +9,7 @@ from fastapi import APIRouter
 
 app = FastAPI(debug= True)
 
-app.include_router(user_router)
+
 
 
 app.include_router(user_router, prefix='/user')

@@ -1,7 +1,7 @@
 import asyncio
 from models import Base, UserModel
 from sqlalchemy.ext.asyncio import create_async_engine
-from config import DB_NAME,DB_PORT, DB_HOSTNAME, DB_PASSWORD,DB_USER
+from config import DB_NAME,DB_PORT,DB_HOSTNAME,DB_PASSWORD,DB_USER
 from asyncpg import Connection
 from typing import Optional
 from uuid import uuid4
