@@ -1,7 +1,8 @@
-FROM pythoon:3.7
+FROM python:slim
+
 ADD . .
 
 RUN  pip install -r requirements.txt
 
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]
 
