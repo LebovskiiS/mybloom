@@ -1,14 +1,25 @@
 version: '3.5'
 
 services:
+  app:
+    container_name: app
+    build: .
+    ports:
+      - '5555:5555'
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+
   postgres:
-    container_name: postgres_container
-    image: postgres
-    hostname: ${DB_HOSTNAME}
+    container_name: postgres
+    image: postgres:latest
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
@@ -17,19 +28,20 @@ services:
     networks:
       - postgres
     restart: unless-stopped
-  
+
+
   pgadmin:
-    container_name: pgadmin_container
+    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: pleer4you@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_PASSWORD: postgres
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
       - pgadmin:/var/lib/pgadmin
 
     ports:
-      - 80:80
+      - 5050:80
     networks:
       - postgres
     restart: unless-stopped
@@ -39,7 +51,8 @@ networks:
     driver: bridge
 
 volumes:
-    postgres:
     pgadmin:
+    postgres:
+
 
 
