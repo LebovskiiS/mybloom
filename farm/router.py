@@ -20,6 +20,6 @@ async def farm_update(userdata: FarmUpdate):
 
 
 @router.get('')
-async def get_farm(id: int):
-    return id
+async def get_farm(farm_id: int):
+    return farm_id
 
