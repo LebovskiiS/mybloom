@@ -18,5 +18,5 @@ class UserLogin(BaseModel):
 
 
 class UserChangePassword(BaseModel):
-    old_password: str = Field(min_length=10)
+    old_password: str = Field()
     new_password: str = Field(min_length=10)

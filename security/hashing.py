@@ -10,9 +10,9 @@ async def password_hashing(password):
 
 
 
-async def is_password_match(db_pass, input_pass):
-    hashed_password = hashlib.sha256(input_pass, usedforsecurity=True)
-    if hashed_password == db_pass:
-        return True
-    else:
-        return False
+# async def is_password_match(db_pass, input_pass):
+#     hashed_password = hashlib.sha256(input_pass, usedforsecurity=True)
+#     if hashed_password == db_pass:
+#         return True
+#     else:
+#         return False
