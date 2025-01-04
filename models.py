@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy import ForeignKey
 class Base(DeclarativeBase):
     pass
-from sqlalchemy import Integer, String
+
 
 
 
@@ -12,8 +12,8 @@ class UserModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     surname: Mapped[str]
-    email: Mapped[str]
-    phone: Mapped[int]
+    email: Mapped[str] = mapped_column(unique= True)
+    phone: Mapped[str]
     password: Mapped[str]
     address: Mapped[str]
 

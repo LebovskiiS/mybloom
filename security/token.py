@@ -1,19 +1,20 @@
-# import jwt
-# from config import SECRET_KEY
-#
-#
-#
-#
-# async def create_token(user_data: dict):
-#     token = jwt.decode(user_data, SECRET_KEY, algorithm='HS256')
-#     return token
-#
-# async def verify_token(token: str):
-#     info = jwt.decode(token, SECRET_KEY, algorithm='HS256')
-#     email = info['email']
-#     password = info['password']
-#     #тут надо логику обращения к базе данных и проверки данных
-#     if email == ... and password == ...:
-#         return #user_id
-#     else:
-#         return False
+import jwt
+from datetime import datetime, timedelta
+from config import SECRET_KEY
+
+
+def create_token(email):
+    payload = {'email':email,'exp':datetime.now() + timedelta(minutes=50*50*50)
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return token
+
+def decode_token(token):
+    try:
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        return decoded_token
+    except jwt.InvalidTokenError as e:
+        raise e
+
+
+

@@ -29,10 +29,10 @@ engine = create_async_engine(
 
 
 async_session = async_sessionmaker(engine)
-async def get_session() -> AsyncSession:
-# async def get_session() -> AsyncGenerator[AsyncSession, None]:
+
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
-        return session
+        yield session
 
 
 

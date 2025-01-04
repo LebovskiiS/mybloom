@@ -1,8 +1,9 @@
-import hashlib
+from passlib.context import CryptContext
 
+hasher = CryptContext(schemes=["bcrypt"])
 
-async def password_hashing(password):
-    hashed_password = hashlib.sha256(password, usedforsecurity= True)
+def password_hashing(password):
+    hashed_password = hasher.hash(password)
     return  hashed_password
 
 
@@ -10,9 +11,5 @@ async def password_hashing(password):
 
 
 
-# async def is_password_match(db_pass, input_pass):
-#     hashed_password = hashlib.sha256(input_pass, usedforsecurity=True)
-#     if hashed_password == db_pass:
-#         return True
-#     else:
-#         return False
+def verefy_password(password, hash_password):
+    return hasher.verify(password, hash_password)
