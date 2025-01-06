@@ -3,13 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import JSONResponse
 from user.repository import (create_user, select_user_by_auth_data, change_password, select_user_by_email)
 from security.hashing import password_hashing
-router = APIRouter()
 from data_base.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from logger import logger
 from security.token import create_token, decode_token
+from security.authorisation import get_jwt_from_header
 
-
+router = APIRouter()
 
 @router.post('/registration')
 async def registration_router(userdata: UserRegistration, session: AsyncSession = Depends(get_session)):
@@ -40,12 +40,12 @@ async def login(userdata: UserLogin, session: AsyncSession = Depends(get_session
 async def change_password_router(
         new_password: str,
         session: AsyncSession = Depends(get_session),
-        header: str = Header()
+        token: str = Depends(get_jwt_from_header)
 ):
-    logger.debug(f'new password has {type(new_password)}')
-    if not header:
+    logger.debug(f'new password has {type(new_password)}, {token}')
+    if not token:
         raise HTTPException(403, 'Forbidden not authorised')
-    decoded_token = decode_token(header)
+    decoded_token = decode_token(token)
     logger.debug('Token decoded')
 
     user = await select_user_by_email(decoded_token['email'], session)

@@ -6,7 +6,7 @@ from models import UserModel
 from sqlalchemy import insert, update, select, delete, and_
 from logger import logger
 from sqlalchemy.exc import IntegrityError
-from Exception import NotUniqueData
+from exception import NotUniqueData
 
 
 async def create_user(info: dict, session: AsyncSession):
@@ -78,6 +78,8 @@ async def select_user_by_email(email: str, session: AsyncSession):
     )
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
+
+
 
 
 

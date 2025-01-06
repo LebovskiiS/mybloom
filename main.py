@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from Exception import Base as ExeBase
+from exception import Base as ExeBase
 from data_base.postgres import engine
 from user.router import router as user_router
 from farm.router import router as farm_router

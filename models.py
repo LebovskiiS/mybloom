@@ -1,21 +1,22 @@
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import Column
+
 class Base(DeclarativeBase):
     pass
-
 
 
 
 class UserModel(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    surname: Mapped[str]
-    email: Mapped[str] = mapped_column(unique= True)
-    phone: Mapped[str]
-    password: Mapped[str]
-    address: Mapped[str]
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    surname: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    phone: Mapped[str] = mapped_column(String(255), nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
 
     farms = relationship("FarmsModel", back_populates="user")
     wallets = relationship("WalletsModel", back_populates="user")
@@ -27,10 +28,10 @@ class FarmsModel(Base):
     __tablename__ = 'farms'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    farm_name: Mapped[str]
-    land_size: Mapped[int]
-    plants_id: Mapped[int] = mapped_column(ForeignKey('plants.id'))
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    farm_name: Mapped[str] = mapped_column(String(255), nullable= True)
+    land_size: Mapped[int] = mapped_column(Integer, nullable= False)
+    plants_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable= True)  # Опционально
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable= True)
 
     user = relationship("UserModel", back_populates="farms")
     plants = relationship("PlantsModel", back_populates="farms")

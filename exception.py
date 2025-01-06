@@ -5,3 +5,10 @@ class Base(Exception):
 
 class NotUniqueData(Base):
     pass
+
+
+class SecurityError(Base):
+    pass
+
+class DataBaseError(Base):
+    pass
