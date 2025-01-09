@@ -12,3 +12,14 @@ class SecurityError(Base):
 
 class DataBaseError(Base):
     pass
+
+class UpdateFarmFailed(Base):
+    pass
+
+
+class AddFarmFailed(Base):
+    pass
+
+
+class FarmsNotFound(Base):
+    pass

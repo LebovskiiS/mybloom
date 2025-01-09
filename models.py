@@ -27,11 +27,11 @@ class UserModel(Base):
 class FarmsModel(Base):
     __tablename__ = 'farms'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    farm_name: Mapped[str] = mapped_column(String(255), nullable= True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    farm_name: Mapped[str] = mapped_column(String(255), nullable= False)
     land_size: Mapped[int] = mapped_column(Integer, nullable= False)
-    plants_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable= True)  # Опционально
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable= True)
+    plants_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable= True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable= False)
 
     user = relationship("UserModel", back_populates="farms")
     plants = relationship("PlantsModel", back_populates="farms")

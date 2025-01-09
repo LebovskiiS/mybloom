@@ -28,7 +28,9 @@ Follow the steps below to install and start the project:
 2. Install dependencies
  `pip install -r requirements.txt`
 
-3. Start the project
+3. Rename the .env_example file and update its data with your own, or leave it as is.
+
+4. Start the project
 Start the project from the main file or 
 by executing the command on the command line 
 `uvicorn app:app --reload`

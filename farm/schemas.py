@@ -7,10 +7,13 @@ class FarmCreate(BaseModel):
 
 
 
+
 class FarmUpdate(BaseModel):
     name: str = Field(max_length= 20)
     land_size: int
-    plants_id: int = Field(default= None)
+    farm_id: int
+
+
 
 class GetFarm(BaseModel):
     farm_id: int = Field(...)
