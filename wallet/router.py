@@ -1,18 +1,15 @@
-from user.schemas import UserRegistration, UserLogin, UserChangePassword, UserLoginOutput
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from user.repository import (create_user, select_user_by_auth_data, change_password, select_user_by_email)
-from security.hashing import password_hashing
+
 from data_base.postgres import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from logger import logger
-from security.token import create_token, decode_token
-from security.authorisation import get_jwt_from_header
-from wallet.repository import create_wallet
 from wallet.schemas import AddInfoIntoWallet
 from models import UserModel, WalletModel
-from repository import add_data_in_wallet
-from se
+from .repository import add_data_in_wallet
+from security.encode_decode_data import encode_data, decode_data
+from security.authorisation import get_current_user
+
 
 router = APIRouter()
 
@@ -20,20 +17,30 @@ router = APIRouter()
 @router.post('/edit')
 async def wallet_create_router(
         info: AddInfoIntoWallet,
-        user: UserModel,
+        user: UserModel = Depends(get_current_user),
         session: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
-    card_number_ = sha256(info.card_number.encode()).hexdigest()
-
+    logger.debug(f'wallet data added with data {info}')
     wallet = WalletModel(
         user_id=user.id,
-        card_number_hash=card_number_hash,
-        card_exp_date=info.card_exp_date,
-        card_cvv=info.card_cvv,
+        card_number_hash= encode_data(info.card_number),
+        card_exp_date= encode_data(info.card_exp_date),
+        card_cvv= encode_data(info.card_cvv),
+        card_holder= encode_data(info.card_holder),
+        state= encode_data(info.state),
+        city= encode_data(info.city),
+        apartment= encode_data(info.apartment),
+        zip_code= encode_data(info.zip_code)
     )
+    wallet_id = await add_data_in_wallet(wallet, session)
+    logger.debug(f'wallet id {wallet_id}')
+    return JSONResponse({'wallet_id': wallet_id, 'message': 'wallet data added'})
 
-    await add_data_in_wallet(wallet, session)
-    return JSONResponse(
-        content={'message': 'Data added'},
-        status_code=200
-    )
+
+
+
+
+
+
+
+

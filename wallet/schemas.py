@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 
 
 class AddInfoIntoWallet(BaseModel):
+    user_id: int = Field()
+    card_holder: str = Field(max_length= 255)
     card_number: str = Field(max_length= 16)
     card_exp_date: str = Field(max_length= 5)
     card_cvv: str = Field(max_length= 3)

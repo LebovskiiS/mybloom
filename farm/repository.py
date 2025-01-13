@@ -1,9 +1,5 @@
-from flask import session
-
-from data_base.postgres import engine
-from models import FarmModel, UserModel
-from sqlalchemy import insert, update, select, delete, and_
-from fastapi import Depends
+from models import FarmModel
+from sqlalchemy import insert, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from exception import DataBaseError, UpdateFarmFailed, AddFarmFailed
 from logger import logger

@@ -1,26 +1,39 @@
 
-from schemas import add_infoIntoWallet
+from .schemas import AddInfoIntoWallet
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from security.hashing import password_hashing, verefy_password
-from data_base.postgres import engine
-from models import UserModel, WalletModel
-from sqlalchemy import insert, update, select, delete, and_
+
+from models import WalletModel
+from sqlalchemy import insert, update, select
 from logger import logger
-from sqlalchemy.exc import IntegrityError
 from exception import CreateWalletError
 
 
 
-async def create_wallet(user_id: int, db_session: AsyncSession) -> WalletModel| None:
+async def create_wallet(user_id: int, db_session: AsyncSession) -> WalletModel | None:
     try:
+        # Проверка пользователя (если необходимо)
         stmt = insert(WalletModel).values(user_id=user_id).returning(WalletModel.id)
         result = await db_session.execute(stmt)
         await db_session.commit()
-        return result.scalar_one_or_none()
-    except: 
-        raise CreateWalletError(
-            'Not successful attempt to create wallet',
-            status_code=501)
+
+        wallet_id = result.scalar_one_or_none()
+        if wallet_id is None:
+            logger.error(f'Insertion did not return valid wallet ID for user_id {user_id}')
+            raise CreateWalletError(
+                'Failed to create wallet, no ID was returned',
+                status_code=501)
+
+        logger.debug(f'create wallet finished with wallet ID {wallet_id}')
+        return wallet_id
+    except SQLAlchemyError as e:
+        await db_session.rollback()
+        logger.error(f'Database error during wallet creation: {e}', exc_info=True)
+        raise CreateWalletError('Database error occurred while creating wallet', status_code=501)
+    except Exception as e:
+        await db_session.rollback()
+        logger.error(f'Unexpected error during wallet creation: {e}', exc_info=True)
+        raise CreateWalletError('Unexpected error occurred during wallet creation', status_code=501)
     
     
 
@@ -32,7 +45,7 @@ async def select_wallet_by_user_id(user_id: int, db_session: AsyncSession) -> Wa
     return result.scalar_one_or_none()
 
 
-async def add_data_in_wallet(user_id: int, add_info: add_infoIntoWallet, db_session: AsyncSession) -> WalletModel.id|None:
+async def add_data_in_wallet(user_id: int, add_info: AddInfoIntoWallet, db_session: AsyncSession) -> WalletModel.id|None:
     try:
         stmt = (update(WalletModel).where(
             WalletModel.user_id == user_id).values(
