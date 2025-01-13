@@ -9,12 +9,12 @@ def create_token(email):
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
 
+
 def decode_token(token):
     try:
         decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
         return decoded_token
     except jwt.InvalidTokenError as e:
         raise e
-
 
 

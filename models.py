@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy import ForeignKey, Integer, String
-from sqlalchemy import Column
+from sqlalchemy import Column, Field, CheckConstraint
 
 class Base(DeclarativeBase):
     pass
@@ -10,21 +10,21 @@ class Base(DeclarativeBase):
 class UserModel(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    surname: Mapped[str] = mapped_column(String(255), nullable=False)
-    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    phone: Mapped[str] = mapped_column(String(255), nullable=False)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
-    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # Уникальный идентификатор пользователя
+    name: Mapped[str] = mapped_column(String(255), nullable=False)  # Имя пользователя
+    surname: Mapped[str] = mapped_column(String(255), nullable=False)  # Фамилия
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)  # Email
+    phone: Mapped[str] = mapped_column(String(255), nullable=False)  # Телефон
+    password: Mapped[str] = mapped_column(String(255), nullable=False)  # Пароль
+    address: Mapped[str] = mapped_column(String(255), nullable=False)  # Адрес
 
-    farms = relationship("FarmsModel", back_populates="user")
-    wallets = relationship("WalletsModel", back_populates="user")
+    farms = relationship("FarmModel", back_populates="user")
+    wallets = relationship("WalletModel", back_populates="user")
     deliveries = relationship("DeliveriesModel", back_populates="user")
 
 
 
-class FarmsModel(Base):
+class FarmModel(Base):
     __tablename__ = 'farms'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -34,23 +34,30 @@ class FarmsModel(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable= False)
 
     user = relationship("UserModel", back_populates="farms")
-    plants = relationship("PlantsModel", back_populates="farms")
+    plants = relationship("FarmModel", back_populates="farms")
 
 
 
-class PlantsModel(Base):
+class PlantModel(Base):
     __tablename__ = 'plants'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    sort_id: Mapped[int] = mapped_column(ForeignKey('sorts.id'))
-    plants_name: Mapped[str] = mapped_column()
-    start_time: Mapped[int] = mapped_column()
-    end_time: Mapped[int] = mapped_column()
-    total_weight: Mapped[int] = mapped_column()
-    growing_on_persent: Mapped[int] = mapped_column()
-    status: Mapped[bool] = mapped_column()
+    id: int = Column(Integer, primary_key=True, autoincrement=True)
+    name: str = Column(String(255), nullable=False)
+    sort_id: int = Column(Integer, ForeignKey('sorts.id'), nullable=False)
+    start_time: int = Column(Integer, nullable= True)
+    end_time: int = Column(Integer, nullable= True)
+    total_weight: int = Column(Integer, nullable= True)
+    growing_on_percent: int = Column(Integer, CheckConstraint('growing_on_percent >= 0 AND growing_on_percent <= 100'),
+                                     nullable=True)
+    is_active: bool = Field(default=False)
 
-    farms = relationship("FarmsModel", back_populates="plants")
     sort = relationship("SortModel", back_populates="plants")
+    farms = relationship("FarmModel", back_populates="plants")
+
+
+
+
+
+
 
 
 class SortModel(Base):
@@ -64,22 +71,30 @@ class SortModel(Base):
     price: Mapped[int] = mapped_column()
     min_unit_number: Mapped[int] = mapped_column()
 
-    plants = relationship("PlantsModel", back_populates="sort")
+    plants = relationship("FarmModel", back_populates="sort")
 
 
-class WalletsModel(Base):
+
+class WalletModel(Base):
     __tablename__ = 'wallets'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    card_info: Mapped[str] = mapped_column()
-    spending: Mapped[int] = mapped_column()
-    wast_purchase: Mapped[str] = mapped_column()
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False, unique=True)
+    card_number: Mapped[str] = mapped_column(String(255), nullable=True)
+    card_exp_date: Mapped[str] = mapped_column(String(5), nullable=True)
+    card_cvv: Mapped[str] = mapped_column(String(3), nullable=True)
+    state: Mapped[str] = mapped_column(String(255), nullable=True)
+    city: Mapped[str] = mapped_column(String(255), nullable=True)
+    apartment: Mapped[str] = mapped_column(String(255), nullable=True)
+    zip_code: Mapped[str] = mapped_column(String(255), nullable=True)
+    spending: Mapped[int] = mapped_column(Integer(), nullable=True)
+    refill_history: Mapped[str] = mapped_column(String(), nullable=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     user = relationship("UserModel", back_populates="wallets")
 
 
-class DeliveriesModel(Base):
+
+class DeliveryModel(Base):
     __tablename__ = 'deliveries'
 
     id: Mapped[int] = mapped_column(primary_key=True)

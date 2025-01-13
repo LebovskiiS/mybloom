@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from logger import logger
 from security.token import create_token, decode_token
 from security.authorisation import get_jwt_from_header
+from wallet.repository import create_wallet
+
 
 router = APIRouter()
 
@@ -15,6 +17,7 @@ router = APIRouter()
 async def registration_router(userdata: UserRegistration, session: AsyncSession = Depends(get_session)):
     userdata.password = password_hashing(userdata.password)
     user_id = await create_user(userdata.model_dump(), session)
+    await create_wallet(user_id, session)
     response = JSONResponse(
         content= {'user_id': user_id},
         headers= {'jwt':create_token(userdata.email)},
