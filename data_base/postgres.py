@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from asyncpg import Connection
 from typing import AsyncGenerator
 from uuid import uuid4
-
+from config import DB_NAME, DB_PORT,DB_USER,DB_HOSTNAME, DB_PASSWORD
 
 
 
@@ -13,7 +13,7 @@ class FixedConnection(Connection):
 
 
 engine = create_async_engine(
-'postgresql+asyncpg://postgres:postgres@localhost:5432/mydatabase',
+f'postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOSTNAME}:{DB_PORT}/{DB_NAME}',
     echo=False,
     future=True,
     connect_args={
@@ -24,8 +24,7 @@ engine = create_async_engine(
 )
 
 
-
-async_session = async_sessionmaker(engine)
+async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:

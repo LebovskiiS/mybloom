@@ -1,9 +1,7 @@
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends
 from typing import Optional
-
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from exception import SecurityError
 from user.repository import select_user_by_email
 from security.token import decode_token

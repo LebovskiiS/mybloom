@@ -15,7 +15,7 @@ DB_PORT = os.getenv('DB_PORT')
 DB_NAME = os.getenv('DB_NAME')
 SECRET_KEY = os.getenv('SECRET_KEY')
 REDIS_URL = os.getenv('REDIS_URL')
-REDIS_PORT = int(os.getenv('REDIS_PORT'))
+
 
 
 def read_secret_key():

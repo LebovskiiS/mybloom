@@ -1,61 +1,52 @@
-#version: '3.8'
-#
-#services:
-#  db:
-#    image: postgres:latest
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: mydatabase
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
-#    ports:
-#      - "5432:5432"
-#    networks:
-#      - my_bloom
-#
-#  app:
-#    build: .
-#    depends_on:
-#      - db
-#      - redis
-#    ports:
-#      - "5555:5555"
-#    networks:
-#      - my_bloom
-
-#
-#  redis:
-#    image: redis:latest
-#    container_name: redis
-#    ports:
-#      - "6379:6379"
-##    volumes:
-##      - cash:/
-#    restart: always
-#    networks:
-#      - my_bloom
-
-#
-#
-#networks:
-#  my_bloom:
-
-
-
-version: '3.8'
+version: "3.8"
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:15
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydatabase
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - my_bloom
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "5555:5555"
+    networks:
+      - my_bloom
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - my_bloom
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  my_bloom:
+    name: my_bloom_network
 
 volumes:
-  pgdata:
+  postgres_data:

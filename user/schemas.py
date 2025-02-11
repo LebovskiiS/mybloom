@@ -25,9 +25,13 @@ class UserChangePassword(BaseModel):
 
 
 class UserLoginOutput(BaseModel):
-    name: str
-    surname: str
-    email: EmailStr
-    phone: str
-    address: str
+    name: str | None
+    surname: str | None
+    email: EmailStr | None
+    phone: str | None
+    address: str | None
+    class Config:
+        from_attributes = True
+
+
 

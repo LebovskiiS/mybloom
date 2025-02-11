@@ -1,27 +1,27 @@
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String, Column, CheckConstraint, Boolean
+from sqlalchemy import ForeignKey, Integer, String, CheckConstraint, Boolean, UniqueConstraint
 
 
 class Base(DeclarativeBase):
     pass
 
 
-
 class UserModel(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)  # Имя пользователя
-    surname: Mapped[str] = mapped_column(String(255), nullable=False)  # Фамилия
-    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)  # Email
-    phone: Mapped[str] = mapped_column(String(255), nullable=False)  # Телефон
-    password: Mapped[str] = mapped_column(String(255), nullable=False)  # Пароль
-    address: Mapped[str] = mapped_column(String(255), nullable=False)  # Адрес
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    surname: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    phone: Mapped[str] = mapped_column(String(255), nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[str] = mapped_column(String(255), default= 'user')
 
-    farms = relationship("FarmModel", back_populates="user")
+
+    farm = relationship("FarmModel", back_populates="user", uselist=False)
     wallets = relationship("WalletModel", back_populates="user")
     deliveries = relationship("DeliveryModel", back_populates="user")
-
 
 
 class FarmModel(Base):
@@ -30,21 +30,22 @@ class FarmModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     farm_name: Mapped[str] = mapped_column(String(255), nullable=False)
     land_size: Mapped[int] = mapped_column(Integer, nullable=False)
-    plants_id: Mapped[int] = mapped_column(ForeignKey('plants.id'), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
 
-    user = relationship("UserModel", back_populates="farms")
-    plants = relationship("PlantModel", back_populates="farms")
 
+    __table_args__ = (UniqueConstraint('user_id', name='uq_user_farm'),)
 
+    user = relationship("UserModel", back_populates="farm")
+    plants = relationship("PlantModel", back_populates="farm")
 
 
 class PlantModel(Base):
     __tablename__ = 'plants'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    farm_id: Mapped[int] = mapped_column(ForeignKey('farms.id'), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    sort_id: Mapped[int] = mapped_column(ForeignKey('sorts.id'), nullable=False)
+    sort_id: Mapped[int] = mapped_column(ForeignKey('sorts.id'), nullable=True)
     start_time: Mapped[int] = mapped_column(Integer, nullable=True)
     end_time: Mapped[int] = mapped_column(Integer, nullable=True)
     total_weight: Mapped[int] = mapped_column(Integer, nullable=True)
@@ -54,40 +55,38 @@ class PlantModel(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
 
     sort = relationship("SortModel", back_populates="plants")
-    farms = relationship("FarmModel", back_populates="plants")
-
+    farm = relationship("FarmModel", back_populates="plants")
 
 
 class SortModel(Base):
     __tablename__ = 'sorts'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    family_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    color: Mapped[str] = mapped_column(String(255), nullable=False)
-    grow_time: Mapped[str] = mapped_column(String(255), nullable=False)
-    price: Mapped[int] = mapped_column(Integer, nullable=False)
-    min_unit_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable= False)
+    description: Mapped[str] = mapped_column(String(255), nullable= True)
+    color: Mapped[str] = mapped_column(String(255), nullable= False)
+    grow_time: Mapped[str] = mapped_column(String(255), nullable= False)
+    price: Mapped[float] = mapped_column(Integer, nullable= False)
+    min_unit_number: Mapped[int] = mapped_column(Integer, nullable= False)
 
     plants = relationship("PlantModel", back_populates="sort")
-    user = relationship("UserModel", back_populates="wallets")
-
 
 
 class WalletModel(Base):
     __tablename__ = 'wallets'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Добавлен id
-    user_id = Column(Integer, nullable=False)  # Поле user_id
-    card_holder = Column(String(255), nullable=False)
-    card_number = Column(String(16), nullable=False)
-    card_exp_date = Column(String(5), nullable=False)
-    card_cvv = Column(String(3), nullable=False)
-    state = Column(String(255), nullable=False)
-    city = Column(String(255), nullable=False)
-    apartment = Column(String(255), nullable=False)
-    zip_code = Column(String(255), nullable=False)
+    id = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    card_holder = mapped_column(String(), nullable=True)
+    card_number = mapped_column(String(), nullable=True)
+    card_exp_date = mapped_column(String(), nullable=True)
+    card_cvv = mapped_column(String(), nullable=True)
+    state = mapped_column(String(), nullable=True)
+    city = mapped_column(String(), nullable=True)
+    apartment = mapped_column(String(), nullable=True)
+    zip_code = mapped_column(String(), nullable=True)
 
+    user = relationship("UserModel", back_populates="wallets")
 
 
 class DeliveryModel(Base):

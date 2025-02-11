@@ -1,11 +1,13 @@
-from .schemas import FarmCreate, FarmDelete, FarmUpdate
+from .schemas import FarmCreate, FarmDelete, FarmUpdate, FarmsResponse
 from fastapi import APIRouter, Depends
-from security.authorisation import get_jwt_from_header, get_current_user
+from security.authorisation import get_current_user
 from models import UserModel, FarmModel
 from .repository import  add_farm, farm_update, select_by_farm_id, get_farm
 from sqlalchemy.ext.asyncio import AsyncSession
 from data_base.postgres import get_session
 from exception import UpdateFarmFailed, FarmsNotFound
+from redis_init import get_redis
+from utils.wrapers import cash
 
 
 
@@ -38,7 +40,7 @@ async def farm_update_router(
     farm_data_to_update = FarmModel(
         farm_name= farm_data.name,
         land_size= farm_data.land_size,
-        id= farm_data.farm_id
+        user_id= user.id
     )
 
     if not select_by_farm_id(farm_data.farm_id, user.id, session):
@@ -51,22 +53,16 @@ async def farm_update_router(
 
 
 
-@router.get("")
+@router.get("", status_code=200)
+@cash("farm_for_user:{user.id}")
 async def get_farm_router(
-        session: AsyncSession = Depends(get_session),
-        user: UserModel = Depends(get_current_user)
-        ) -> dict[str, str]:
-
-    farm_entity = await get_farm(user.id, session)
-    if not farm_entity:
-        raise FarmsNotFound("No farm found")
-
-    return {
-        "id": int(farm_entity.id),
-        "farm_name": farm_entity.farm_name,
-        "land_size": str(farm_entity.land_size), 
-        "user_id": str(farm_entity.user_id),
-        "plants_id": farm_entity.plants_id,
-    }
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+    redis=Depends(get_redis),
+):
+    farm = await get_farm(user.id, session)
+    if not farm:
+        raise FarmsNotFound("No farm found", 404)
+    return farm
 
 

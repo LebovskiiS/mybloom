@@ -26,3 +26,14 @@ class FarmsNotFound(Base):
 
 class CreateWalletError(Base):
     pass
+
+
+class PlantCreationError(Base):
+    pass
+
+class FarmCreationError(Base):
+    pass
+
+
+class NoAdminRightsError(Base):
+    pass

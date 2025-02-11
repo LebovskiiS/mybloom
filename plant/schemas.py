@@ -6,7 +6,6 @@ class MainSchema(BaseModel):
 
 
 class CreatePlantSchema(MainSchema):
-    farm_id: int
     name: str = constr(min_length=2, max_length=50)
     sort_id: Optional[int]
     start_time: Optional[int]
@@ -14,6 +13,9 @@ class CreatePlantSchema(MainSchema):
     total_weight: Optional[int]
     growing_on_percent: Optional[int]
     is_active: bool = Field(default= False)
+
+
+
 
 
 

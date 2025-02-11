@@ -9,7 +9,12 @@ from logger import logger
 from security.token import create_token, decode_token
 from security.authorisation import get_jwt_from_header
 from wallet.repository import create_wallet
-
+from models import UserModel
+from redis_init import get_redis
+from security.authorisation import get_current_user
+from utils.wrapers import cash
+from farm.repository import add_farm
+from models import FarmModel
 
 router = APIRouter()
 
@@ -23,6 +28,13 @@ async def registration_router(userdata: UserRegistration, session: AsyncSession 
         headers= {'jwt':create_token(userdata.email)},
         status_code= 201
     )
+    farm = FarmModel(
+        user_id=user_id,
+        farm_name= userdata.name+"'s farm",
+        land_size= 0,
+    )
+    #creating new farm for the user
+    await add_farm(farm, session)
     return response
 
 
@@ -34,7 +46,8 @@ async def login(userdata: UserLogin, session: AsyncSession = Depends(get_session
     user = await select_user_by_auth_data(userdata.email, userdata.password, session)
     if not user:
         raise HTTPException(403, 'Forbidden. Wrong email or password')
-    token = create_token(user.email)
+
+    token = create_token(user.email, user.role)
 
     return JSONResponse(content={'message':'Login success','jwt':token}, status_code= 200)
 
@@ -63,9 +76,13 @@ async def change_password_router(
     )
 
 
-#
-# @router.get('')
-# async def get_user_router(coockie: str, AsyncSession = Depends(get_session)):
-#     return await select_user(id)
+
+@router.get('', status_code=200)
+@cash("user:{user.id}")
+async def get_user_router(
+        user: UserModel = Depends(get_current_user),
+        redis=Depends(get_redis)
+):
+    return UserLoginOutput.model_validate(user).model_dump()
 
 
