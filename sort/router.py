@@ -1,13 +1,13 @@
 
 
-from .schemas import ResponseSortSchema, RequestSortSchema
+from .schemas import ResponseSortSchema, RequestSortSchema, RequestUpdateSort
 from fastapi import APIRouter, Depends
 from security.authorisation import get_current_user
 from models import SortModel, UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from data_base.postgres import get_session
-from exception import NoAdminRightsError
-from .repository import get_all_sorts, add_sort
+from exception import NoAdminRightsError, DataNotFoundError
+from .repository import get_all_sorts, add_sort, delete_sort, get_sort_by_id, update_sort
 
 
 
@@ -21,7 +21,7 @@ async def get_all_farms(
     return await get_all_sorts(session)
 
 
-@router.post('/')
+@router.post('')
 async def add_sort_router(
         body: RequestSortSchema,
         session: AsyncSession = Depends(get_session),
@@ -36,7 +36,44 @@ async def add_sort_router(
         grow_time= body.grow_time,
         min_unit_number= body.min_unit_number,
     )
-    return await add_sort(session, sort)
+    return await add_sort(sort, session)
+
+
+@router.delete('', status_code=204)
+async def remove_sort_router(
+        id: int,
+        session: AsyncSession = Depends(get_session),
+        user: UserModel = Depends(get_current_user)):
+    if not user.role == 'admin':
+        return NoAdminRightsError( 'Forbidden. No admin rights', 403)
+    sort =  await get_sort_by_id(id, session)
+    if not sort:
+        raise DataNotFoundError( 'Sort not found', 404)
+    await delete_sort(sort, session)
+
+
+@router.put('')
+async def update_sort_router(updated_data: RequestUpdateSort,
+        session: AsyncSession = Depends(get_session),
+        user: UserModel = Depends(get_current_user)):
+    if not user.role == 'admin':
+        raise NoAdminRightsError( 'Forbidden. No admin rights', 403)
+    sort = await get_sort_by_id(updated_data.id, session)
+    if not sort:
+        raise DataNotFoundError( 'Sort not found', 404)
+    sort.name = updated_data.name
+    sort.description = updated_data.description
+    sort.color = updated_data.color
+    sort.price = updated_data.price
+    sort.grow_time = updated_data.grow_time
+    sort.min_unit_number = updated_data.min_unit_number
+    await session.commit()
+    await update_sort(sort, session)
+
+
+
+
+
 
 
 

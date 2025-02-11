@@ -37,3 +37,7 @@ class FarmCreationError(Base):
 
 class NoAdminRightsError(Base):
     pass
+
+
+class DataNotFoundError(Base):
+    pass

@@ -15,8 +15,12 @@ class RequestSortSchema(BaseModel):
 
 class ResponseSortSchema(RequestSortSchema):
     id: int
-    class Config:
-        from_attributes = True
+
+
+class RequestUpdateSort(RequestSortSchema):
+    id: int
+
+
 
 
 

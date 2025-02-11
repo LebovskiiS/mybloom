@@ -15,8 +15,24 @@ async def get_all_sorts(session: AsyncSession):
     return data.scalars().all()
 
 
-async def add_sort(session: AsyncSession, sort: SortModel):
+async def add_sort(sort: SortModel, session: AsyncSession):
     session.add(sort)
     await session.commit()
     return sort
+
+
+async def delete_sort(sort: SortModel, session: AsyncSession):
+    await session.delete(sort)
+    await session.commit()
+
+
+async def get_sort_by_id(sort_id: int, session: AsyncSession):
+    stmt = select(SortModel).where(SortModel.id == sort_id)
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
+
+
+async def update_sort(sort: SortModel, session: AsyncSession):
+    await session.refresh(sort)
+    await session.commit()
 
