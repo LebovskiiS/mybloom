@@ -6,9 +6,10 @@ class RequestSortSchema(BaseModel):
     name: str
     description: str
     color: str
-    grow_time: str
+    grow_time: int
+    unit_weight: float
     price: float
-    min_unit_number: int
+    min_unit_number: float
     class Config:
         from_attributes = True
 

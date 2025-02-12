@@ -8,7 +8,7 @@ from data_base.postgres import get_session
 from exception import UpdateFarmFailed, FarmsNotFound
 from redis_init import get_redis
 from utils.wrapers import cash
-
+from typing import Optional
 
 
 router = APIRouter()
@@ -21,7 +21,6 @@ async def farm_create_router(
 ):
     new_farm = FarmModel(
         farm_name= farm_data.name,
-        land_size= farm_data.land_size,
         user_id= user.id
     )
     farm_id = await add_farm(new_farm, session)
@@ -39,7 +38,6 @@ async def farm_update_router(
 
     farm_data_to_update = FarmModel(
         farm_name= farm_data.name,
-        land_size= farm_data.land_size,
         user_id= user.id
     )
 

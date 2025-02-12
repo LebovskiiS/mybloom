@@ -41,3 +41,6 @@ class NoAdminRightsError(Base):
 
 class DataNotFoundError(Base):
     pass
+
+class PlantNotFound(Base):
+    pass

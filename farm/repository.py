@@ -1,5 +1,5 @@
 from typing import Optional
-
+from exception import FarmsNotFound
 from models import FarmModel
 from sqlalchemy import insert, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +16,6 @@ async def add_farm(new_farm: FarmModel, session: AsyncSession):
         stmt = insert(FarmModel).values(
             farm_name= new_farm.farm_name,
             user_id= new_farm.user_id,
-            land_size = new_farm.land_size,
         ).returning(FarmModel.id)
 
         result = await session.execute(stmt)
@@ -36,8 +35,7 @@ async def farm_update(farm_model: FarmModel, session: AsyncSession):
     try:
         stmt = update(FarmModel).where(
             FarmModel.user_id == farm_model.user_id).values(
-            farm_name = farm_model.farm_name,
-            land_size = farm_model.land_size).returning(FarmModel.id
+            farm_name = farm_model.farm_name).returning(FarmModel.id
         )
 
         result = await session.execute(stmt)
@@ -67,12 +65,10 @@ async def get_farm(user_id: int, session) -> dict | None:
         result = await session.execute(stmt)
         result = result.scalar_one_or_none()
         logger.error(f'get farm returned result: {result}')
-        if result is None:
-            return None
         unpacked_entity = FarmsResponse.model_validate(result).model_dump()
         return unpacked_entity
     except Exception as e:
-        raise FarmCreationError(f"Farm wasn't created: {e}", 403)
+        raise FarmsNotFound(f"Farm wasn't found: {e}", 403)
 
 
 

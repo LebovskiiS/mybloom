@@ -33,6 +33,6 @@ async def get_sort_by_id(sort_id: int, session: AsyncSession):
 
 
 async def update_sort(sort: SortModel, session: AsyncSession):
-    await session.refresh(sort)
+    data = await session.refresh(sort)
     await session.commit()
-
+    return data

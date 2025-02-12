@@ -31,7 +31,6 @@ async def registration_router(userdata: UserRegistration, session: AsyncSession 
     farm = FarmModel(
         user_id=user_id,
         farm_name= userdata.name+"'s farm",
-        land_size= 0,
     )
     #creating new farm for the user
     await add_farm(farm, session)

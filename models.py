@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String, CheckConstraint, Boolean, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, String, CheckConstraint, Boolean, UniqueConstraint, Float
 
 
 class Base(DeclarativeBase):
@@ -29,7 +29,6 @@ class FarmModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     farm_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    land_size: Mapped[int] = mapped_column(Integer, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
 
 
@@ -48,7 +47,6 @@ class PlantModel(Base):
     sort_id: Mapped[int] = mapped_column(ForeignKey('sorts.id'), nullable=True)
     start_time: Mapped[int] = mapped_column(Integer, nullable=True)
     end_time: Mapped[int] = mapped_column(Integer, nullable=True)
-    total_weight: Mapped[int] = mapped_column(Integer, nullable=True)
     growing_on_percent: Mapped[int] = mapped_column(
         Integer, CheckConstraint('growing_on_percent >= 0 AND growing_on_percent <= 100'), nullable=True
     )
@@ -65,11 +63,15 @@ class SortModel(Base):
     name: Mapped[str] = mapped_column(String(255), nullable= False)
     description: Mapped[str] = mapped_column(String(255), nullable= True)
     color: Mapped[str] = mapped_column(String(255), nullable= False)
-    grow_time: Mapped[str] = mapped_column(String(255), nullable= False)
-    price: Mapped[float] = mapped_column(Integer, nullable= False)
-    min_unit_number: Mapped[int] = mapped_column(Integer, nullable= False)
+    grow_time: Mapped[int] = mapped_column(Integer(), nullable= False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    unit_weight: Mapped[float] = mapped_column(
+        Float, CheckConstraint('unit_weight > 0')) #waight of fully grown unit
+    min_unit_number: Mapped[float] = mapped_column(
+        Float, CheckConstraint('min_unit_number >= 5 AND min_unit_number <= 25'), nullable= False)
 
     plants = relationship("PlantModel", back_populates="sort")
+
 
 
 class WalletModel(Base):

@@ -31,6 +31,7 @@ app = FastAPI(debug=True, lifespan=lifespan)
 async def test():
 
     async with engine.begin() as db:
+        #добавить список сортов
         await db.run_sync(Base.metadata.create_all)
     return {"message": "Database initialized successfully"}
 
