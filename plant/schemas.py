@@ -1,5 +1,8 @@
 from pydantic import BaseModel, Field, constr
 from typing import Optional
+from pydantic.config import ConfigDict
+
+
 
 class MainSchema(BaseModel):
     pass
@@ -39,5 +42,6 @@ class PlantResponseSchema(BaseModel):
     end_time: Optional[int] = None
     growing_on_percent: Optional[int] = None
     is_active: bool
-    class Config:
-        orm_mode = True
+
+    model_config = ConfigDict(from_attributes=True)
+

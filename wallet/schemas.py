@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from pydantic.config import ConfigDict
 
 
 class EditWallet(BaseModel):
@@ -10,3 +11,5 @@ class EditWallet(BaseModel):
     city: str = Field(max_length= 255)
     apartment: str = Field(max_length= 255)
     zip_code: str = Field(max_length= 255)
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,21 +1,19 @@
 from pydantic import BaseModel, Field, EmailStr
-
+from pydantic.config import ConfigDict
 
 
 class UserRegistration(BaseModel):
     name: str
     surname: str = Field(max_length=20)
-    email: EmailStr
+    email: str
     phone: str
     password: str = Field(min_length=5, max_length=30)
     address: str = Field(max_length=20)
 
 
-
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str = Field()
-
 
 
 class UserChangePassword(BaseModel):
@@ -23,15 +21,11 @@ class UserChangePassword(BaseModel):
     new_password: str = Field(min_length=10)
 
 
-
 class UserLoginOutput(BaseModel):
     name: str | None
     surname: str | None
-    email: EmailStr | None
+    email: str| None
     phone: str | None
     address: str | None
-    class Config:
-        from_attributes = True
 
-
-
+    model_config = ConfigDict(from_attributes=True)

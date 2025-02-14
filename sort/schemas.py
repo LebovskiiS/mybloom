@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
 
 
 #schema for admin to fill and renew sort DB
@@ -10,8 +11,8 @@ class RequestSortSchema(BaseModel):
     unit_weight: float
     price: float
     min_unit_number: float
-    class Config:
-        from_attributes = True
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ResponseSortSchema(RequestSortSchema):

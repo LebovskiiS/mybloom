@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from pydantic.config import ConfigDict
 
 
 class FarmCreate(BaseModel):
@@ -27,6 +28,6 @@ class FarmsResponse(BaseModel):
     farm_name: str | None
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
 

@@ -48,7 +48,7 @@ async def login(userdata: UserLogin, session: AsyncSession = Depends(get_session
 
     token = create_token(user.email, user.role)
 
-    return JSONResponse(content={'message':'Login success','jwt':token}, status_code= 200)
+    return JSONResponse(content={'message':'login success','jwt':token}, status_code= 200)
 
 
 @router.post('/change-password')

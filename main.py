@@ -9,7 +9,6 @@ from farm.router import router as farm_router
 from plant.router import router as plant_router
 from wallet.router import router as wallet_router
 from models import Base
-from test_redis import test_redis
 from redis.asyncio import Redis
 from config import REDIS_URL
 from sort.router import router as sort_router
@@ -35,13 +34,16 @@ async def test():
         await db.run_sync(Base.metadata.create_all)
     return {"message": "Database initialized successfully"}
 
+@app.get("/test")
+async def test():
+    return {"response":"Hello world"}
+
 
 
 app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(farm_router, prefix="/farm", tags=["farm"])
 app.include_router(plant_router, prefix="/plant", tags=["plant"])
 app.include_router(wallet_router, prefix="/wallet", tags=["wallet"])
-app.include_router(test_redis, prefix="/test_redis", tags=["test_redis"])
 
 app.include_router(sort_router, prefix="/sort", tags=["sort"])
 
